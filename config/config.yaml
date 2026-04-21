@@ -1,0 +1,71 @@
+# Gdynia Thermal DB – Main Configuration
+
+project:
+  name: gdynia-thermal-db
+  version: "0.1.0"
+  description: "Research-grade geospatial data engineering for the Gdynia thermal map project"
+
+http:
+  timeout: 30
+  retry_count: 3
+  retry_backoff: 2.0
+  user_agent: "gdynia-thermal-db/1.0 (research project)"
+
+sources:
+  buildings:
+    url: "https://termalne.obliview.com/mapa/Data/Wektory/budynki.geojson"
+    local_path: "data/raw/vector/budynki.geojson"
+    type: "vector/geojson"
+    confirmed: true
+    notes: "Public building layer from the Gdynia thermal viewer"
+
+  districts:
+    url: "https://otwartedane.gdynia.pl/pl/dataset/6197975f-bfb2-4ccd-a56f-6dd645048a88/resource/973c73dc-82cd-4da6-a771-f4b7826036e1/download/dzielnice_gdyni.zip"
+    local_path: "data/external/admin_units/Dzielnice_Gdyni.zip"
+    type: "vector/shapefile-zip"
+    confirmed: true
+    notes: "Official Gdynia district boundaries from the open data portal (Mapa Gdyni dataset)"
+
+  viewer:
+    base_url: "https://termalne.obliview.com/mapa/"
+    confirmed: true
+    notes: "Public GIS viewer entry point"
+
+  viewer_assets:
+    - name: conf_js
+      url: "https://termalne.obliview.com/mapa/conf.js"
+      local_path: "data/raw/viewer/conf.js"
+      type: "config/js"
+      confirmed: false
+    - name: settings_js
+      url: "https://termalne.obliview.com/mapa/settings.js"
+      local_path: "data/raw/viewer/settings.js"
+      type: "config/js"
+      confirmed: false
+    - name: gdynia_json
+      url: "https://termalne.obliview.com/mapa/Data/Gdynia.json"
+      local_path: "data/raw/metadata/Gdynia.json"
+      type: "metadata/json"
+      confirmed: false
+
+paths:
+  data_dir: "data"
+  raw_dir: "data/raw"
+  external_dir: "data/external"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  outputs_dir: "outputs"
+
+crs:
+  project_crs: "EPSG:2180"    # Poland CS92 – used for area calculations
+  wgs84: "EPSG:4326"           # Geographic CRS for GeoJSON
+
+database:
+  buildings_raw_path: "data/processed/buildings/buildings_raw.gpkg"
+  buildings_clean_path: "data/processed/buildings/buildings_clean.gpkg"
+  buildings_master_path: "data/processed/buildings/buildings_master.gpkg"
+  buildings_parquet_path: "data/processed/buildings/buildings_master.parquet"
+  districts_path: "data/processed/admin_units/gdynia_districts.gpkg"
+  district_metrics_path: "outputs/tables/district_metrics.csv"
+  source_inventory_path: "outputs/tables/source_inventory.csv"
+  thermal_inventory_path: "outputs/tables/thermal_tiles_inventory.csv"
